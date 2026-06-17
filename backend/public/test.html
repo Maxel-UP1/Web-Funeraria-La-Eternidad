@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casa Funeraria La Eternidad — API Test</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #1a1a2e; color: #e0e0e0; padding: 2rem; }
+    h1 { color: #d4af37; margin-bottom: 1rem; }
+    h2 { color: #7b8ea0; margin: 1.5rem 0 0.5rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; }
+    .card { background: #16213e; border: 1px solid #0f3460; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+    .endpoint { display: flex; align-items: center; gap: 0.5rem; margin: 0.5rem 0; cursor: pointer; padding: 0.5rem; border-radius: 4px; }
+    .endpoint:hover { background: #0f3460; }
+    .method { font-weight: bold; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; min-width: 50px; text-align: center; }
+    .get { background: #27ae60; color: #fff; }
+    .post { background: #e67e22; color: #fff; }
+    .patch { background: #3498db; color: #fff; }
+    .delete { background: #e74c3c; color: #fff; }
+    .path { font-family: monospace; font-size: 0.9rem; }
+    .auth { font-size: 0.7rem; color: #d4af37; margin-left: auto; }
+    #output { background: #0d1117; border: 1px solid #333; border-radius: 8px; padding: 1rem; margin-top: 1rem; white-space: pre-wrap; font-family: monospace; font-size: 0.85rem; max-height: 400px; overflow-y: auto; }
+    button { background: #d4af37; color: #1a1a2e; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    button:hover { background: #b8972e; }
+    input { background: #0d1117; border: 1px solid #333; color: #e0e0e0; padding: 0.5rem; border-radius: 4px; width: 100%; margin-bottom: 0.5rem; }
+    .login-form { display: flex; gap: 0.5rem; align-items: end; flex-wrap: wrap; margin-bottom: 1rem; }
+    .login-form div { flex: 1; min-width: 150px; }
+    .login-form label { font-size: 0.75rem; color: #7b8ea0; display: block; margin-bottom: 2px; }
+    .status { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; }
+    .status.ok { background: #27ae60; }
+    .status.err { background: #e74c3c; }
+    a { color: #d4af37; }
+  </style>
+</head>
+<body>
+  <h1>🏛️ Casa Funeraria La Eternidad — API Test Console</h1>
+  <p style="margin-bottom:1rem">
+    <a href="/api/docs" target="_blank">📚 Abrir Swagger UI</a> |
+    Base URL: <code>/api</code>
+  </p>
+
+  <div class="card">
+    <h2>🔐 Login</h2>
+    <div class="login-form">
+      <div><label>Email</label><input id="email" value="admin@eternidad.com"></div>
+      <div><label>Password</label><input id="password" type="password" value="Admin123!"></div>
+      <button onclick="doLogin()">Login</button>
+      <span id="loginStatus"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📡 Endpoints Públicos</h2>
+    <div class="endpoint" onclick="callApi('GET', '/api/health')">
+      <span class="method get">GET</span><span class="path">/api/health</span>
+    </div>
+    <div class="endpoint" onclick="callApi('GET', '/api/categories')">
+      <span class="method get">GET</span><span class="path">/api/categories</span>
+    </div>
+    <div class="endpoint" onclick="callApi('GET', '/api/products')">
+      <span class="method get">GET</span><span class="path">/api/products</span>
+    </div>
+    <div class="endpoint" onclick="callApi('GET', '/api/branches')">
+      <span class="method get">GET</span><span class="path">/api/branches</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🔒 Endpoints Protegidos (requiere login)</h2>
+    <div class="endpoint" onclick="callApi('GET', '/api/auth/profile')">
+      <span class="method get">GET</span><span class="path">/api/auth/profile</span><span class="auth">JWT</span>
+    </div>
+    <div class="endpoint" onclick="callApi('GET', '/api/leads')">
+      <span class="method get">GET</span><span class="path">/api/leads</span><span class="auth">ADMIN</span>
+    </div>
+    <div class="endpoint" onclick="callApi('GET', '/api/pre-orders')">
+      <span class="method get">GET</span><span class="path">/api/pre-orders</span><span class="auth">ADMIN</span>
+    </div>
+  </div>
+
+  <h2>📤 Response</h2>
+  <div id="output">Click an endpoint above to see results...</div>
+
+  <script>
+    let accessToken = '';
+
+    async function doLogin() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const status = document.getElementById('loginStatus');
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (data.data && data.data.accessToken) {
+          accessToken = data.data.accessToken;
+          status.className = 'status ok';
+          status.textContent = '✅ Logged in';
+          showOutput(data);
+        } else {
+          status.className = 'status err';
+          status.textContent = '❌ Failed';
+          showOutput(data);
+        }
+      } catch (e) {
+        status.className = 'status err';
+        status.textContent = '❌ Error';
+        showOutput({ error: e.message });
+      }
+    }
+
+    async function callApi(method, path) {
+      const headers = { 'Content-Type': 'application/json' };
+      if (accessToken) headers['Authorization'] = 'Bearer ' + accessToken;
+
+      try {
+        const res = await fetch(path, { method, headers });
+        const data = await res.json();
+        showOutput(data);
+      } catch (e) {
+        showOutput({ error: e.message });
+      }
+    }
+
+    function showOutput(data) {
+      document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>

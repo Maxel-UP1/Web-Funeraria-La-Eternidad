@@ -1,0 +1,67 @@
+# ============================================
+# Casa Funeraria La Eternidad — Docker Compose
+# Dev environment: NestJS + PostgreSQL + Redis
+# ============================================
+
+services:
+  # --- PostgreSQL ---
+  postgres:
+    image: postgres:16-alpine
+    container_name: eternidad-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: eternidad_user
+      POSTGRES_PASSWORD: eternidad_pass
+      POSTGRES_DB: eternidad_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U eternidad_user -d eternidad_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Redis ---
+  redis:
+    image: redis:7-alpine
+    container_name: eternidad-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- NestJS App (production mode) ---
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eternidad-api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://eternidad_user:eternidad_pass@postgres:5432/eternidad_db
+      JWT_SECRET: change-this-in-production
+      JWT_REFRESH_SECRET: change-this-refresh-in-production
+      JWT_EXPIRATION: 15m
+      JWT_REFRESH_EXPIRATION: 7d
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PORT: 3000
+      NODE_ENV: production
+      CORS_ORIGINS: http://localhost:3000
+      WA_PHONE_NUMBER: 573001234567
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

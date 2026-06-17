@@ -1,0 +1,153 @@
+// Casa Funeraria La Eternidad — Database Schema
+// PostgreSQL + Prisma ORM
+// UUIDs, normalized relations, proper indexes
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// Auth Context — Identity & Access
+// ============================================
+
+enum Role {
+  ADMIN
+  SUPER_ADMIN
+}
+
+model User {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  role         Role     @default(ADMIN)
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+// ============================================
+// Catalog Context — Products & Categories
+// ============================================
+
+enum CategoryType {
+  FLOWER
+  SERVICE
+}
+
+model Category {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String       @db.VarChar(255)
+  slug        String       @unique @db.VarChar(255)
+  type        CategoryType
+  description String?      @db.Text
+  isActive    Boolean      @default(true) @map("is_active")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  products Product[]
+
+  @@index([isActive])
+  @@index([type])
+  @@map("categories")
+}
+
+model Product {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  categoryId  String   @map("category_id") @db.Uuid
+  name        String   @db.VarChar(255)
+  slug        String   @unique @db.VarChar(255)
+  description String?  @db.Text
+  price       Decimal  @db.Decimal(10, 2)
+  imageBase64 String?  @map("image_base64") @db.Text
+  isActive    Boolean  @default(true) @map("is_active")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  category  Category   @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  preOrders PreOrder[]
+
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([slug])
+  @@map("products")
+}
+
+// ============================================
+// CRM Context — Leads & PreOrders
+// ============================================
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  CLOSED
+}
+
+enum PreOrderStatus {
+  CREATED
+  REDIRECTED_TO_WA
+  COMPLETED
+  CANCELLED
+}
+
+model Lead {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String     @db.VarChar(255)
+  phone     String?    @db.VarChar(50)
+  email     String?    @db.VarChar(255)
+  message   String     @db.Text
+  status    LeadStatus @default(NEW)
+  source    String?    @db.VarChar(100)
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("leads")
+}
+
+model PreOrder {
+  id            String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId     String         @map("product_id") @db.Uuid
+  customerName  String         @map("customer_name") @db.VarChar(255)
+  customerPhone String         @map("customer_phone") @db.VarChar(50)
+  customerEmail String?        @map("customer_email") @db.VarChar(255)
+  quantity      Int            @default(1)
+  status        PreOrderStatus @default(CREATED)
+  waLink        String?        @map("wa_link") @db.VarChar(500)
+  createdAt     DateTime       @default(now()) @map("created_at")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([productId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("pre_orders")
+}
+
+// ============================================
+// Locations Context — Branches
+// ============================================
+
+model Branch {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String   @db.VarChar(255)
+  address      String   @db.VarChar(500)
+  city         String   @db.VarChar(100)
+  department   String   @db.VarChar(100)
+  latitude     Decimal  @db.Decimal(10, 8)
+  longitude    Decimal  @db.Decimal(11, 8)
+  contactPhone String   @map("contact_phone") @db.VarChar(50)
+  contactEmail String?  @map("contact_email") @db.VarChar(255)
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@index([isActive])
+  @@map("branches")
+}

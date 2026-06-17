@@ -1,0 +1,53 @@
+# compiled output
+/dist
+/node_modules
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+
+# Tests
+/coverage
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Environment
+.env
+.env.test
+.env.development
+.env.production
+.env.local
+
+# Prisma
+/prisma/dev.db
+/prisma/dev.db-journal
+
+# Vercel
+.vercel
+.vercel_build_output
+
+# Temporary files
+_test_db.js
+_check.js
+*.temp
+*.tmp

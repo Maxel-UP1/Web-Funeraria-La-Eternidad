@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+/* Adobe Fonts (descomentar al activar el web project) */
+/* @import url("https://use.typekit.net/TU_ID.css"); */
+
+@theme {
+  --color-oro: #bf9f62;
+  --color-tinta: #18222e;
+  --color-oro-fuerte: #ccad52;
+  --color-crema: #e7d8ad;
+  --color-gris: #9a9da4;
+  --color-azul-claro: #d3e3ef;
+  --color-gris-claro: #e0e3e8;
+
+  --font-display: "adobe-myungjo", var(--font-playfair), Georgia, serif;
+  --font-body: var(--font-source-sans), system-ui, sans-serif;
+}
+
+body {
+  background: #ffffff;
+}
