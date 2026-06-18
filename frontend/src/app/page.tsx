@@ -104,7 +104,7 @@ export default async function Home() {
       </section>
 
       {/* Mapa + Descripción instalaciones */}
-      <section className="bg-crema/20 py-16">
+      <section id="mapa" className="bg-crema/20 py-16">
         <div className="mx-auto max-w-6xl px-4">
           <div className="grid gap-10 md:grid-cols-2 items-center">
             {/* Mapa */}
