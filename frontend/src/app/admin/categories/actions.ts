@@ -7,12 +7,12 @@ import { z } from 'zod';
 
 const categorySchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
-  type: z.enum(['FLOWER', 'SERVICE']),
+  type: z.enum(['PRODUCT', 'SERVICE']),
   description: z.string().optional(),
   isActive: z.boolean().optional(),
 });
 
-export async function createCategoryAction(data: { name: string; type: 'FLOWER' | 'SERVICE'; description?: string }) {
+export async function createCategoryAction(data: { name: string; type: 'PRODUCT' | 'SERVICE'; description?: string }) {
   const validated = categorySchema.safeParse(data);
   if (!validated.success) {
     throw new Error(validated.error.errors[0].message);
@@ -25,7 +25,7 @@ export async function createCategoryAction(data: { name: string; type: 'FLOWER' 
   return res;
 }
 
-export async function updateCategoryAction(id: string, data: { name?: string; type?: 'FLOWER' | 'SERVICE'; description?: string | null; isActive?: boolean }) {
+export async function updateCategoryAction(id: string, data: { name?: string; type?: 'PRODUCT' | 'SERVICE'; description?: string | null; isActive?: boolean }) {
   const res = await updateCategory(id, data);
   revalidatePath('/servicios');
   revalidatePath('/productos');

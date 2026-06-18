@@ -93,8 +93,8 @@ export function CategoriesTable({ categories }: { categories: Category[] }) {
                     <>
                       <td className="px-4 py-3 text-sm font-semibold text-tinta">{c.name}</td>
                       <td className="px-4 py-3 text-sm text-tinta">
-                        <span className={`inline-block rounded px-2 py-0.5 text-xs font-semibold ${c.type === 'FLOWER' ? 'bg-orange-100 text-orange-800' : 'bg-teal-100 text-teal-800'}`}>
-                          {c.type === 'FLOWER' ? 'Flores' : 'Servicios'}
+                        <span className={`inline-block rounded px-2 py-0.5 text-xs font-semibold ${c.type === 'PRODUCT' ? 'bg-amber-100 text-amber-800' : 'bg-teal-100 text-teal-800'}`}>
+                          {c.type === 'PRODUCT' ? 'Producto' : 'Servicio'}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-sm text-gris max-w-xs truncate">{c.description || '—'}</td>
@@ -136,7 +136,7 @@ export function CategoriesTable({ categories }: { categories: Category[] }) {
 
 function CategoryForm({ initialData, onSubmit, onCancel, isPending }: any) {
   const [data, setData] = useState(
-    initialData || { name: '', type: 'FLOWER', description: '', isActive: true }
+    initialData || { name: '', type: 'PRODUCT', description: '', isActive: true }
   );
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -173,8 +173,8 @@ function CategoryForm({ initialData, onSubmit, onCancel, isPending }: any) {
             onChange={(e) => setData({ ...data, type: e.target.value })}
             className="mt-1 w-full rounded border border-gris-claro bg-white px-3 py-1.5 text-sm focus:border-oro focus:outline-none"
           >
-            <option value="FLOWER">Flores</option>
-            <option value="SERVICE">Servicios</option>
+            <option value="PRODUCT">Producto</option>
+            <option value="SERVICE">Servicio</option>
           </select>
         </div>
       </div>

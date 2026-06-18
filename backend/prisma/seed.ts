@@ -31,7 +31,7 @@ async function main(): Promise<void> {
     create: {
       name: 'Ramos Fúnebres',
       slug: 'ramos-funebres',
-      type: CategoryType.FLOWER,
+      type: CategoryType.PRODUCT,
       description: 'Arreglos florales para ceremonias y homenajes',
     },
   });
@@ -53,7 +53,7 @@ async function main(): Promise<void> {
     create: {
       name: 'Coronas Florales',
       slug: 'coronas-florales',
-      type: CategoryType.FLOWER,
+      type: CategoryType.PRODUCT,
       description: 'Coronas para velorios y ceremonias de despedida',
     },
   });

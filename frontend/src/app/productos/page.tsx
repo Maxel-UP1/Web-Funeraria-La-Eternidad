@@ -5,12 +5,14 @@ import Image from "next/image";
 export const metadata = { title: "Productos | Casa Funeraria La Eternidad" };
 
 export default async function ProductosPage() {
-  let categoryId: string | undefined;
+  let productCategoryIds: string[] = [];
   try {
     const categorias = await getCategories();
-    categoryId = categorias.find((c) => c.type === "FLOWER")?.id;
+    productCategoryIds = categorias
+      .filter((c) => c.type === "PRODUCT" && c.isActive)
+      .map((c) => c.id);
   } catch {
-    categoryId = undefined;
+    productCategoryIds = [];
   }
 
   return (
@@ -124,13 +126,19 @@ export default async function ProductosPage() {
         </div>
       </section>
 
-      {/* Lista de productos del backend */}
+      {/* Lista de productos del backend — solo type=PRODUCT */}
       <section className="bg-crema/20 py-16 md:py-20">
         <div className="mx-auto max-w-6xl px-4">
           <h2 className="text-center font-display text-3xl font-semibold text-tinta mb-8 md:text-4xl">
             Selecciona un producto
           </h2>
-          <ListaProductos categoryId={categoryId} />
+          {productCategoryIds.length > 0 ? (
+            productCategoryIds.map((catId) => (
+              <ListaProductos key={catId} categoryId={catId} />
+            ))
+          ) : (
+            <p className="text-center text-tinta/60">No hay productos disponibles.</p>
+          )}
         </div>
       </section>
     </>

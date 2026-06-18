@@ -4,12 +4,14 @@ import ListaProductos from "@/components/ListaProductos";
 export const metadata = { title: "Servicios | Casa Funeraria La Eternidad" };
 
 export default async function ServiciosPage() {
-  let categoryId: string | undefined;
+  let serviceCategoryIds: string[] = [];
   try {
     const categorias = await getCategories();
-    categoryId = categorias.find((c) => c.type === "SERVICE")?.id;
+    serviceCategoryIds = categorias
+      .filter((c) => c.type === "SERVICE" && c.isActive)
+      .map((c) => c.id);
   } catch {
-    categoryId = undefined;
+    serviceCategoryIds = [];
   }
 
   return (
@@ -33,10 +35,16 @@ export default async function ServiciosPage() {
         </div>
       </section>
 
-      {/* Listado de productos */}
+      {/* Listado de servicios — solo type=SERVICE */}
       <section className="pb-20">
         <div className="mx-auto max-w-6xl px-4">
-          <ListaProductos categoryId={categoryId} />
+          {serviceCategoryIds.length > 0 ? (
+            serviceCategoryIds.map((catId) => (
+              <ListaProductos key={catId} categoryId={catId} />
+            ))
+          ) : (
+            <p className="text-center text-tinta/60 py-16">No hay servicios disponibles.</p>
+          )}
         </div>
       </section>
     </>

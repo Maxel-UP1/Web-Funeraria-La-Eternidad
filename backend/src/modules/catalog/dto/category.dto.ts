@@ -8,7 +8,7 @@ export class CreateCategoryDto {
   @IsNotEmpty()
   name!: string;
 
-  @ApiProperty({ enum: CategoryType, example: 'FLOWER' })
+  @ApiProperty({ enum: CategoryType, example: 'PRODUCT' })
   @IsEnum(CategoryType)
   type!: CategoryType;
 

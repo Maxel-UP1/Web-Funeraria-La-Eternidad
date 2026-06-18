@@ -142,11 +142,11 @@ export async function getCategoriesAdmin() {
   return adminFetch<Category[]>('/categories');
 }
 
-export async function createCategory(data: { name: string; type: 'FLOWER' | 'SERVICE'; description?: string }) {
+export async function createCategory(data: { name: string; type: 'PRODUCT' | 'SERVICE'; description?: string }) {
   return adminFetch<Category>('/categories', { method: 'POST', body: JSON.stringify(data) });
 }
 
-export async function updateCategory(id: string, data: Partial<{ name: string; type: 'FLOWER' | 'SERVICE'; description: string | null; isActive: boolean }>) {
+export async function updateCategory(id: string, data: Partial<{ name: string; type: 'PRODUCT' | 'SERVICE'; description: string | null; isActive: boolean }>) {
   return adminFetch<Category>(`/categories/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
 }
 

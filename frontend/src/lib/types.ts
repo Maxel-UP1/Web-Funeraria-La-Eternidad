@@ -1,4 +1,4 @@
-export type CategoryType = "FLOWER" | "SERVICE";
+export type CategoryType = "PRODUCT" | "SERVICE";
 export type LeadStatus = "NEW" | "CONTACTED" | "CLOSED";
 export type PreOrderStatus =
   | "CREATED"
