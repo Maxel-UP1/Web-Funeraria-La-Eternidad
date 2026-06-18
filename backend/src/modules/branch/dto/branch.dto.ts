@@ -49,6 +49,11 @@ export class CreateBranchDto {
   @IsOptional()
   @IsEmail()
   contactEmail?: string;
+
+  @ApiPropertyOptional({ default: true })
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
 }
 
 export class UpdateBranchDto {

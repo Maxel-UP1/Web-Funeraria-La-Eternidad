@@ -29,6 +29,7 @@ export class BranchService {
       longitude: dto.longitude,
       contactPhone: dto.contactPhone,
       contactEmail: dto.contactEmail,
+      isActive: dto.isActive,
     });
   }
 

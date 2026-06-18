@@ -33,6 +33,7 @@ export class CategoryService {
       slug,
       type: dto.type,
       description: dto.description,
+      isActive: dto.isActive,
     });
   }
 
